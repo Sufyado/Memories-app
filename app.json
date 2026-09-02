@@ -40,7 +40,8 @@
         "expo-image-picker",
         {
           "photosPermission": "Vistoria يحتاج الوصول إلى الصور لإضافتها إلى ذكرياتك.",
-          "cameraPermission": "Vistoria يحتاج الوصول إلى الكاميرا لالتقاط لحظاتك مباشرة."
+          "cameraPermission": "Vistoria يحتاج الوصول إلى الكاميرا لالتقاط لحظاتك مباشرة.",
+          "microphonePermission": "Vistoria يحتاج الوصول إلى الميكروفون لتسجيل الفيديو بصوت."
         }
       ]
     ],

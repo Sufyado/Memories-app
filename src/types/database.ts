@@ -288,6 +288,10 @@ export interface Database {
         Args: { p_story_id: string; p_snapshot: Json };
         Returns: number;
       };
+      reorder_slides: {
+        Args: { p_story_id: string; p_ordered_ids: string[] };
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
