@@ -1,9 +1,9 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
-import AppTabs from '@/components/app-tabs';
+import { AuthProvider } from '@/lib/auth/auth-provider';
 import { I18nProvider } from '@/lib/i18n';
 
 SplashScreen.preventAutoHideAsync();
@@ -18,7 +18,13 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <I18nProvider>
-        <AppTabs />
+        <AuthProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="auth/sign-in" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="auth/sign-up" options={{ presentation: 'modal' }} />
+          </Stack>
+        </AuthProvider>
       </I18nProvider>
     </ThemeProvider>
   );

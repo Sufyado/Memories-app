@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { type ReactNode } from 'react';
 import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { SymbolView } from 'expo-symbols';
@@ -8,11 +9,13 @@ import { Button } from '@/components/ui/button';
 import { Screen } from '@/components/ui/screen';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useAuth } from '@/lib/auth/auth-provider';
 import { Locale, useI18n } from '@/lib/i18n';
 
 export default function ProfileScreen() {
   const { t, locale, setLocale } = useI18n();
   const theme = useTheme();
+  const { user, signOut } = useAuth();
 
   const handleSetLocale = async (next: Locale) => {
     if (next === locale) return;
@@ -34,14 +37,18 @@ export default function ProfileScreen() {
             tintColor={theme.textSecondary}
           />
           <ThemedText type="small" themeColor="textSecondary" style={styles.grow}>
-            {t('profile.notSignedIn')}
+            {user?.email ?? t('profile.notSignedIn')}
           </ThemedText>
         </ThemedView>
-        <Button
-          label={t('profile.signIn')}
-          variant="secondary"
-          onPress={() => Alert.alert(t('profile.signIn'), t('common.comingSoon'))}
-        />
+        {user ? (
+          <Button label={t('profile.signOut')} variant="secondary" onPress={() => signOut()} />
+        ) : (
+          <Button
+            label={t('profile.signIn')}
+            variant="secondary"
+            onPress={() => router.push('/auth/sign-in')}
+          />
+        )}
       </Section>
 
       <Section title={t('profile.language')}>
