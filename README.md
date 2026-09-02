@@ -52,12 +52,15 @@ src/
     create/                 New Folder / New Story (modal routes)
     library/[folderId].tsx  Drill into a folder
     story/[id]/
-      index.tsx              Editor (title/description, slides, tags, delete)
+      index.tsx              Editor (title/description, slides, tags, team, delete)
       view.tsx                Viewer (full-screen slide playback)
       comments.tsx             Story-level comments
+    s/[slug].tsx             Public Web Viewer (no account needed)
   components/
     library/                 Folder/story cards, grid-list toggle
-    story/                   Slide row, add-slide buttons, progress bar, tag chips
+    story/                   StoryPlayer (shared by both viewers), slide row,
+                              add-slide buttons, progress bar, tag chips,
+                              share sheet, team section
     ui/                      Screen, Button, Input, EmptyState, SignInPrompt, …
   constants/                Design tokens: colors, spacing, typography
   hooks/                    useTheme, useColorScheme
@@ -66,7 +69,8 @@ src/
     supabase/                Client + hand-written Database types
     auth/auth-provider.tsx   Session state + sign in/up/out
     data/                    Supabase queries (folders/stories/slides/media/
-                              tags/comments/profiles/search)
+                              tags/comments/profiles/search/share-links/
+                              story-members)
     media/                   Camera/gallery picking, video thumbnails
   types/
     domain.ts               Shared domain types (Folder, Story, Slide, Media, …)
@@ -109,10 +113,15 @@ npm install
    ```
    EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
    EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   EXPO_PUBLIC_WEB_BASE_URL=https://your-deployed-web-url
    ```
 
    Only variables prefixed `EXPO_PUBLIC_` are bundled into the app — never
-   put a `service_role` key in `.env`.
+   put a `service_role` key in `.env`. `EXPO_PUBLIC_WEB_BASE_URL` is only
+   used to *display/copy* a full `/s/<slug>` share link on native (the web
+   build reads `window.location.origin` instead) — it doesn't need to be
+   set for local development, only once you've actually deployed the web
+   build somewhere.
 5. In Authentication → Providers, Email sign-up is enabled by default. For
    local development you may want to turn off "Confirm email" so
    `npx expo start` sign-ups work immediately.
@@ -230,8 +239,8 @@ Development proceeds in phases (see the project plan).
   Always-dark chrome regardless of the device's light/dark theme setting
   (fixed white-on-black, since it's an immersive overlay, not a themed
   screen). An info panel shows the story's description; Edit (owner only)
-  jumps to the editor; Comment/Share are wired up as visible
-  "coming soon" affordances — real ones land in Phase 6/7.
+  jumps to the editor; Comment/Share are wired up for real as of
+  Phase 6/7.
 - Tapping a story from Home/Library now opens the Viewer (not the
   editor) — matching the spec's "open the memory and scroll through it"
   principle. The route moved to `/story/[id]/index.tsx` so `/story/[id]`
@@ -260,7 +269,34 @@ Development proceeds in phases (see the project plan).
   in V1, per spec; the schema already carries a nullable `slide_id` for
   per-slide comments later.
 
-Not yet implemented: team sharing (roles, share links, Web Viewer) and export.
+**Phase 7 — Team, Sharing, Public Links, Web Viewer** ✅
+
+- `StoryPlayer` (`src/components/story/story-player.tsx`): the Viewer's
+  full playback UI was pulled out of `story/[id]/view.tsx` into a
+  reusable component, parametrized by which actions are available
+  (Edit/Comment/Share are all optional props). Both the authenticated
+  Viewer and the new public Web Viewer render the exact same player —
+  they just load their data differently and wire up different actions.
+- Web Viewer: `/s/[slug]`. No account needed — an active `share_links`
+  row is what grants read access via RLS (`stories`/`story_slides`/
+  `media` select policies already allowed this since Phase 2/4), not
+  being signed in. Resolves the slug, plays the story, Share re-shares
+  the same URL via the native share sheet; no Edit/Comment (there's
+  nothing to edit as a stranger, and posting a comment requires an
+  account per the `comments insert` RLS policy).
+- Share management (owner only, from the Viewer's Share button): create
+  a link, copy it, share it, turn it off/back on
+  (`src/components/story/share-sheet.tsx`, `src/lib/data/share-links.ts`).
+  Slugs are `<slugified-title>-<random>`, retried on the rare collision.
+- Team (owner only, in the editor's new Team section): invite an
+  existing user as editor or viewer by email, remove a member.
+  `supabase/migrations/20260902040000_team_lookup.sql` adds
+  `find_user_by_email()` — a `SECURITY DEFINER` exact-match lookup, not a
+  new broadly-readable `email` column on `profiles`, so this doesn't let
+  any signed-in user enumerate everyone else's email address the way
+  extending the existing "profiles select" policy would have.
+
+Not yet implemented: export (PDF/ZIP/JSON), version history, activity log.
 
 > **Testing note:** media upload, video playback, and camera/gallery
 > access all need a real, configured Supabase project and a real
@@ -277,7 +313,15 @@ Not yet implemented: team sharing (roles, share links, Web Viewer) and export.
 > around it are verified against real Postgres, and every screen using
 > them is smoke-tested for crashes, but querying real data (does the
 > right story actually come back for a given search term, does a posted
-> comment actually show up) needs that same live project.
+> comment actually show up) needs that same live project. Same story for
+> Phase 7: `find_user_by_email()` and every share-link RLS policy are
+> verified against real Postgres (including the storage-object path
+> derivation), and the Web Viewer's not-found state is confirmed in a
+> headless browser (nonexistent slug → "Story not found", no crash), but
+> the full loop — invite a real second account, create a link, open
+> `/s/<slug>` in an actual browser signed out, confirm the native Share
+> sheet appears on a device — needs that live project plus a second
+> account and a real device/browser to try end-to-end.
 
 ## Database schema
 
@@ -305,3 +349,18 @@ Row Level Security (`supabase/migrations/20260902010100_rls.sql`) enforces:
 
 Folders are owner-only in V1 (not shared via `story_members`), matching
 the spec: only Stories are explicitly shareable.
+
+Storage (`supabase/migrations/20260902020000_storage.sql`) mirrors the
+same model on `storage.objects`: objects are keyed as
+`stories/<story_id>/<file>`, and the policies derive access from that
+`story_id` (owner/editor for write, the same read rules as above for
+read) rather than joining to `media`, since the metadata row doesn't
+exist yet at upload time.
+
+Team invites (`find_user_by_email()`,
+`supabase/migrations/20260902040000_team_lookup.sql`) are a
+`SECURITY DEFINER` exact-match lookup rather than a broadly-readable
+`email` column on `profiles` — a story owner can check whether a
+specific email has an account, but no signed-in user can enumerate
+everyone else's email address the way extending the existing
+`profiles select` policy (`using (true)`) to include email would have.

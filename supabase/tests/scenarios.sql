@@ -322,6 +322,26 @@ end
 $$;
 commit;
 
+-- find_user_by_email(): exact-match lookup for team invites, no
+-- enumeration (matches only when the caller already knows the email).
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001';
+do $$
+declare
+  found_id uuid;
+begin
+  select id into found_id from public.find_user_by_email('bob@example.com');
+  assert found_id = '00000000-0000-0000-0000-000000000002', 'FAIL: should find bob by exact email';
+  raise notice 'PASS: find_user_by_email() finds bob by exact email match';
+
+  select id into found_id from public.find_user_by_email('nobody@example.com');
+  assert found_id is null, 'FAIL: should find nobody for an unknown email';
+  raise notice 'PASS: find_user_by_email() returns nothing for an unknown email';
+end
+$$;
+commit;
+
 do $$
 begin
   raise notice 'ALL SCENARIO CHECKS PASSED';

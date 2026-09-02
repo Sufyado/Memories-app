@@ -6,6 +6,7 @@ import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from 'react-nat
 import { AddSlideButtons } from '@/components/story/add-slide-buttons';
 import { SlideRow } from '@/components/story/slide-row';
 import { TagChips } from '@/components/story/tag-chips';
+import { TeamSection } from '@/components/story/team-section';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/button';
@@ -260,6 +261,8 @@ export default function StoryDetailScreen() {
           </View>
         ) : null}
       </View>
+
+      {isOwner ? <TeamSection storyId={story.id} /> : null}
 
       {isOwner ? (
         <Button

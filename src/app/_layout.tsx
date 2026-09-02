@@ -29,6 +29,7 @@ export default function RootLayout() {
             <Stack.Screen name="story/[id]/index" />
             <Stack.Screen name="story/[id]/view" options={{ presentation: 'fullScreenModal', animation: 'fade' }} />
             <Stack.Screen name="story/[id]/comments" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="s/[slug]" options={{ presentation: 'fullScreenModal', animation: 'fade' }} />
           </Stack>
         </AuthProvider>
       </I18nProvider>

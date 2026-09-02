@@ -288,6 +288,10 @@ export type Database = {
         Args: { search_query: string };
         Returns: Database['public']['Tables']['stories']['Row'][];
       };
+      find_user_by_email: {
+        Args: { lookup_email: string };
+        Returns: { id: string; display_name: string | null }[];
+      };
     };
     Enums: {
       story_visibility: StoryVisibility;
