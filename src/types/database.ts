@@ -27,6 +27,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database['public']['Tables']['profiles']['Insert']>;
+        Relationships: [];
       };
       folders: {
         Row: {
@@ -48,6 +49,7 @@ export interface Database {
           updated_at?: string;
         };
         Update: Partial<Database['public']['Tables']['folders']['Insert']>;
+        Relationships: [];
       };
       stories: {
         Row: {
@@ -83,6 +85,7 @@ export interface Database {
           updated_at?: string;
         };
         Update: Partial<Database['public']['Tables']['stories']['Insert']>;
+        Relationships: [];
       };
       story_slides: {
         Row: {
@@ -110,6 +113,7 @@ export interface Database {
           updated_at?: string;
         };
         Update: Partial<Database['public']['Tables']['story_slides']['Insert']>;
+        Relationships: [];
       };
       media: {
         Row: {
@@ -143,6 +147,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database['public']['Tables']['media']['Insert']>;
+        Relationships: [];
       };
       tags: {
         Row: {
@@ -158,11 +163,13 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database['public']['Tables']['tags']['Insert']>;
+        Relationships: [];
       };
       story_tags: {
         Row: { story_id: string; tag_id: string };
         Insert: { story_id: string; tag_id: string };
         Update: Partial<Database['public']['Tables']['story_tags']['Insert']>;
+        Relationships: [];
       };
       comments: {
         Row: {
@@ -186,6 +193,7 @@ export interface Database {
           updated_at?: string;
         };
         Update: Partial<Database['public']['Tables']['comments']['Insert']>;
+        Relationships: [];
       };
       story_members: {
         Row: {
@@ -203,6 +211,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database['public']['Tables']['story_members']['Insert']>;
+        Relationships: [];
       };
       share_links: {
         Row: {
@@ -224,6 +233,7 @@ export interface Database {
           disabled_at?: string | null;
         };
         Update: Partial<Database['public']['Tables']['share_links']['Insert']>;
+        Relationships: [];
       };
       story_versions: {
         Row: {
@@ -243,6 +253,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database['public']['Tables']['story_versions']['Insert']>;
+        Relationships: [];
       };
       activity_log: {
         Row: {
@@ -264,6 +275,7 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Database['public']['Tables']['activity_log']['Insert']>;
+        Relationships: [];
       };
     };
     Views: Record<string, never>;

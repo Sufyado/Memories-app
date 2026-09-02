@@ -39,13 +39,17 @@
   "folder": {
     "new": "مجلد جديد",
     "name": "اسم المجلد",
+    "unfiled": "غير مصنف",
     "stories": "{{count}} قصة",
     "stories_other": "{{count}} قصص",
     "empty": "هذا المجلد فارغ",
-    "emptyDesc": "أنشئ أول قصة لبدء الأرشفة."
+    "emptyDesc": "أنشئ أول قصة لبدء الأرشفة.",
+    "deleteConfirmTitle": "حذف هذا المجلد؟",
+    "deleteConfirmBody": "ستنتقل القصص بداخله إلى غير مصنف. لا يمكن التراجع عن هذا."
   },
   "story": {
     "new": "قصة جديدة",
+    "section": "القصص",
     "title": "العنوان",
     "description": "الوصف",
     "chooseFolder": "اختر المجلد",

@@ -10,3 +10,5 @@ export * from './components/EmptyState';
 export * from './components/IconButton';
 export * from './components/Avatar';
 export * from './components/LoadingView';
+export * from './components/CoverImage';
+export * from './components/PromptModal';

@@ -39,13 +39,17 @@
   "folder": {
     "new": "New Folder",
     "name": "Folder name",
+    "unfiled": "Unfiled",
     "stories": "{{count}} story",
     "stories_other": "{{count}} stories",
     "empty": "This folder is empty",
-    "emptyDesc": "Create your first story to start archiving."
+    "emptyDesc": "Create your first story to start archiving.",
+    "deleteConfirmTitle": "Delete this folder?",
+    "deleteConfirmBody": "Stories inside will move to Unfiled. This can't be undone."
   },
   "story": {
     "new": "New Story",
+    "section": "Stories",
     "title": "Title",
     "description": "Description",
     "chooseFolder": "Choose folder",
