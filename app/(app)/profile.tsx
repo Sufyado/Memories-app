@@ -1,15 +1,17 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { Avatar, Button, Card, Chip, Screen, Text } from '@/design-system';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { useLanguage } from '@/lib/LanguageProvider';
+import { useLoadDemoData } from '@/features/demo/hooks';
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const { user, signOut } = useAuth();
   const { language, setLanguage, pendingRestart } = useLanguage();
+  const loadDemoData = useLoadDemoData();
 
   const fullName = (user?.user_metadata?.full_name as string | undefined) ?? user?.email ?? '';
 
@@ -40,7 +42,27 @@ export default function ProfileScreen() {
         ) : null}
       </Card>
 
-      <Button label={t('auth.signOut')} variant="secondary" onPress={signOut} style={{ marginTop: 24 }} />
+      <Card style={{ padding: 16, gap: 10, marginTop: 16 }}>
+        <Text variant="label" weight="semibold" color="secondary">
+          Demo
+        </Text>
+        <Text variant="caption" color="secondary">
+          Adds two example archives (a propagation experiment and a personal memory) so you can see
+          Vistoria with real content.
+        </Text>
+        <Button
+          label="Load demo content"
+          variant="secondary"
+          loading={loadDemoData.isPending}
+          onPress={() => {
+            loadDemoData.mutate(undefined, {
+              onError: (err) => Alert.alert(t('common.error'), err instanceof Error ? err.message : String(err)),
+            });
+          }}
+        />
+      </Card>
+
+      <Button label={t('auth.signOut')} variant="secondary" onPress={signOut} style={{ marginTop: 16 }} />
     </Screen>
   );
 }
