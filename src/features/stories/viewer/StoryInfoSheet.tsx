@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, ScrollView, View } from 'react-native';
+import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-import { Avatar, Button, IconButton, Input, Text, useTheme } from '@/design-system';
+import { Avatar, Button, Chip, IconButton, Input, Text, useTheme } from '@/design-system';
 import { useAddComment, useComments } from '@/features/comments/hooks';
+import { useTagsForStory } from '@/features/tags/hooks';
 import type { Story } from '@/types/domain';
 import { formatRelative } from '@/utils/date';
 
@@ -18,6 +20,7 @@ export function StoryInfoSheet({ visible, story, onClose }: StoryInfoSheetProps)
   const theme = useTheme();
   const comments = useComments(visible ? story.id : undefined);
   const addComment = useAddComment(story.id);
+  const tags = useTagsForStory(visible ? story.id : undefined);
   const [text, setText] = useState('');
 
   return (
@@ -58,6 +61,21 @@ export function StoryInfoSheet({ visible, story, onClose }: StoryInfoSheetProps)
               {t('story.version', { version: story.version })} · {t('story.updatedAt', { date: formatRelative(story.updated_at, i18n.language) })}
             </Text>
           </View>
+
+          {tags.data && tags.data.length > 0 ? (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {tags.data.map((tag) => (
+                <Chip
+                  key={tag.id}
+                  label={`#${tag.name}`}
+                  onPress={() => {
+                    onClose();
+                    router.push(`/tag/${tag.id}`);
+                  }}
+                />
+              ))}
+            </View>
+          ) : null}
 
           <View style={{ gap: 12 }}>
             <Text variant="label" weight="semibold" color="secondary">

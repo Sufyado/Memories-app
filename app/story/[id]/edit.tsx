@@ -14,6 +14,7 @@ import { blocksToForm, emptySlideForm, formToBlocks, isSlideFormEmpty, type Slid
 import { SlideEditorModal } from '@/features/slides/components/SlideEditorModal';
 import { parseSlideBlocks, type StorySlide } from '@/types/domain';
 import type { Json } from '@/types/database';
+import { TagsEditor } from '@/features/tags/components/TagsEditor';
 
 export default function StoryEditScreen() {
   const { t } = useTranslation();
@@ -36,6 +37,7 @@ export default function StoryEditScreen() {
   const editingSlide = slides.find((s) => s.id === editingSlideId);
   const [saving, setSaving] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
+  const [editingDescription, setEditingDescription] = useState(false);
 
   async function addSlide() {
     const created = await createSlide.mutateAsync({ position: slides.length });
@@ -100,10 +102,14 @@ export default function StoryEditScreen() {
         }}
       />
       <Screen padded={false}>
-        <View style={{ padding: 20, gap: 4 }}>
+        <View style={{ padding: 20, gap: 8 }}>
           <Text variant="title" weight="bold" onPress={() => setEditingTitle(true)}>
             {story.data.title || t('common.untitled')}
           </Text>
+          <Text variant="body" color="secondary" onPress={() => setEditingDescription(true)}>
+            {story.data.description || t('story.description')}
+          </Text>
+          <TagsEditor storyId={id} />
           <Text variant="caption" color="secondary">
             {t('story.reorderHint')}
           </Text>
@@ -182,6 +188,17 @@ export default function StoryEditScreen() {
         onSubmit={(title) => {
           updateStoryMeta.mutate({ id, patch: { title } });
           setEditingTitle(false);
+        }}
+      />
+
+      <PromptModal
+        visible={editingDescription}
+        title={t('story.description')}
+        initialValue={story.data.description ?? ''}
+        onClose={() => setEditingDescription(false)}
+        onSubmit={(description) => {
+          updateStoryMeta.mutate({ id, patch: { description } });
+          setEditingDescription(false);
         }}
       />
     </>

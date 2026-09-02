@@ -102,6 +102,10 @@
     "editor": "محرر",
     "viewer": "مشاهد"
   },
+  "tags": {
+    "new": "وسم جديد",
+    "title": "الوسوم"
+  },
   "export": {
     "title": "تصدير",
     "json": "JSON",

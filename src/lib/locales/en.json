@@ -102,6 +102,10 @@
     "editor": "Editor",
     "viewer": "Viewer"
   },
+  "tags": {
+    "new": "New tag",
+    "title": "Tags"
+  },
   "export": {
     "title": "Export",
     "json": "JSON",
