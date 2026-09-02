@@ -6,17 +6,17 @@ export const STORY_MEDIA_BUCKET = 'story-media';
 
 const SIGNED_URL_TTL_SECONDS = 60 * 60; // 1 hour
 
+export async function getSignedMediaUrl(path: string): Promise<string> {
+  const { data, error } = await supabase.storage.from(STORY_MEDIA_BUCKET).createSignedUrl(path, SIGNED_URL_TTL_SECONDS);
+  if (error) throw error;
+  return data.signedUrl;
+}
+
 /** Storage is private; every read goes through a short-lived signed URL. */
 export function useSignedMediaUrl(path: string | null | undefined) {
   return useQuery({
     queryKey: ['signed-url', path],
-    queryFn: async () => {
-      const { data, error } = await supabase.storage
-        .from(STORY_MEDIA_BUCKET)
-        .createSignedUrl(path as string, SIGNED_URL_TTL_SECONDS);
-      if (error) throw error;
-      return data.signedUrl;
-    },
+    queryFn: () => getSignedMediaUrl(path as string),
     enabled: !!path,
     staleTime: (SIGNED_URL_TTL_SECONDS - 5 * 60) * 1000,
   });

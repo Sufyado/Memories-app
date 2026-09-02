@@ -11,6 +11,7 @@ import { useActiveShareLink, useCreateShareLink, useSetShareLinkActive } from '@
 import { getShareUrl } from '@/features/sharing/url';
 import { useInviteMember, useMembers, useRemoveMember, useUpdateMemberRole } from '@/features/team/hooks';
 import { useAuth } from '@/features/auth/AuthProvider';
+import { useExportJson, useExportPdf, useExportZip } from '@/features/export/hooks';
 import type { StoryRole, StoryVisibility } from '@/types/domain';
 
 const VISIBILITIES: StoryVisibility[] = ['private', 'team', 'public'];
@@ -35,6 +36,18 @@ export default function ShareSettingsScreen() {
 
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<StoryRole>('viewer');
+
+  const exportJson = useExportJson(id);
+  const exportZip = useExportZip(id);
+  const exportPdf = useExportPdf(id);
+
+  async function runExport(mutation: { mutateAsync: () => Promise<void> }) {
+    try {
+      await mutation.mutateAsync();
+    } catch (err) {
+      Alert.alert(t('common.error'), err instanceof Error ? err.message : String(err));
+    }
+  }
 
   if (story.isLoading) return <LoadingView />;
   if (!story.data) return null;
@@ -168,6 +181,35 @@ export default function ShareSettingsScreen() {
                 <Button size="sm" label={t('common.add')} onPress={onInvite} loading={inviteMember.isPending} />
               </View>
             </Card>
+          </View>
+
+          <View style={{ gap: 10 }}>
+            <Text variant="label" weight="semibold" color="secondary">
+              {t('export.title')}
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+              <Button
+                size="sm"
+                variant="secondary"
+                label={t('export.json')}
+                loading={exportJson.isPending}
+                onPress={() => runExport(exportJson)}
+              />
+              <Button
+                size="sm"
+                variant="secondary"
+                label={t('export.zip')}
+                loading={exportZip.isPending}
+                onPress={() => runExport(exportZip)}
+              />
+              <Button
+                size="sm"
+                variant="secondary"
+                label={t('export.pdf')}
+                loading={exportPdf.isPending}
+                onPress={() => runExport(exportPdf)}
+              />
+            </View>
           </View>
         </View>
       </Screen>
