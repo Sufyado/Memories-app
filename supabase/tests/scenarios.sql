@@ -159,6 +159,105 @@ end
 $$;
 commit;
 
+-- Storage: objects are keyed as stories/<story_id>/<file>, and access is
+-- derived from that path (see supabase/migrations/20260902020000_storage.sql)
+-- since the public.media row doesn't exist yet at upload time. The 'media'
+-- bucket itself was already created by that migration.
+
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001';
+insert into storage.objects (bucket_id, name)
+values ('media', 'stories/10000000-0000-0000-0000-000000000001/photo1.jpg');
+commit;
+
+do $$
+begin
+  raise notice 'PASS: owner alice can upload a storage object for her story';
+end
+$$;
+
+-- Bob is a viewer on this story (added earlier) — viewers cannot upload.
+-- An INSERT that fails WITH CHECK raises an error (unlike UPDATE, which
+-- just matches zero rows), so this has to be caught explicitly.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000002';
+do $$
+begin
+  begin
+    insert into storage.objects (bucket_id, name)
+    values ('media', 'stories/10000000-0000-0000-0000-000000000001/photo2.jpg');
+    raise exception 'FAIL: viewer bob uploaded a storage object';
+  exception
+    when insufficient_privilege or others then
+      raise notice 'PASS: viewer bob cannot upload a storage object (%)', sqlerrm;
+  end;
+end
+$$;
+rollback;
+
+-- Bob (viewer) can still read the object alice uploaded.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000002';
+do $$
+declare
+  cnt integer;
+begin
+  select count(*) into cnt from storage.objects where name = 'stories/10000000-0000-0000-0000-000000000001/photo1.jpg';
+  assert cnt = 1, 'FAIL: viewer bob should be able to read the story''s storage object';
+  raise notice 'PASS: viewer bob can read the story''s storage object';
+end
+$$;
+commit;
+
+-- The share link was deactivated earlier in this script, so anon should
+-- not be able to read the storage object either.
+begin;
+set local role anon;
+do $$
+declare
+  cnt integer;
+begin
+  select count(*) into cnt from storage.objects where name = 'stories/10000000-0000-0000-0000-000000000001/photo1.jpg';
+  assert cnt = 0, 'FAIL: anon should not read a storage object for a private story';
+  raise notice 'PASS: anon cannot read the storage object while the story has no active share link';
+end
+$$;
+commit;
+
+-- Owner deletes the object; a viewer may not.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000002';
+delete from storage.objects where name = 'stories/10000000-0000-0000-0000-000000000001/photo1.jpg';
+do $$
+begin
+  if (select count(*) from storage.objects where name = 'stories/10000000-0000-0000-0000-000000000001/photo1.jpg') = 1 then
+    raise notice 'PASS: viewer bob cannot delete the storage object';
+  else
+    raise exception 'FAIL: viewer bob deleted the storage object';
+  end if;
+end
+$$;
+rollback;
+
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001';
+delete from storage.objects where name = 'stories/10000000-0000-0000-0000-000000000001/photo1.jpg';
+do $$
+begin
+  if (select count(*) from storage.objects where name = 'stories/10000000-0000-0000-0000-000000000001/photo1.jpg') = 0 then
+    raise notice 'PASS: owner alice can delete the storage object';
+  else
+    raise exception 'FAIL: owner alice could not delete the storage object';
+  end if;
+end
+$$;
+commit;
+
 do $$
 begin
   raise notice 'ALL SCENARIO CHECKS PASSED';

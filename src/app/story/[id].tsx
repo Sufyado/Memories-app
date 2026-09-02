@@ -2,6 +2,8 @@ import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native';
 
+import { AddSlideButtons } from '@/components/story/add-slide-buttons';
+import { SlideRow } from '@/components/story/slide-row';
 import { ThemedText } from '@/components/themed-text';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -9,7 +11,10 @@ import { Input } from '@/components/ui/input';
 import { Screen } from '@/components/ui/screen';
 import { Spacing } from '@/constants/theme';
 import { useAuth } from '@/lib/auth/auth-provider';
+import { deleteMedia } from '@/lib/data/media';
+import { deleteSlide, updateSlideBlocks } from '@/lib/data/slides';
 import { deleteStory, getStory, updateStory } from '@/lib/data/stories';
+import { useSlides } from '@/lib/data/use-slides';
 import { useI18n } from '@/lib/i18n';
 import type { Story } from '@/types/domain';
 
@@ -24,6 +29,8 @@ export default function StoryDetailScreen() {
   const [description, setDescription] = useState('');
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  const { slides, mediaById, loading: slidesLoading, refresh: refreshSlides, move } = useSlides(story?.id);
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -113,6 +120,35 @@ export default function StoryDetailScreen() {
     ]);
   };
 
+  const handleCaptionChange = async (slideId: string, text: string) => {
+    try {
+      await updateSlideBlocks(slideId, text ? [{ id: 'heading', type: 'heading', text }] : []);
+      refreshSlides();
+    } catch (e) {
+      Alert.alert(t('common.error'), e instanceof Error ? e.message : undefined);
+    }
+  };
+
+  const handleDeleteSlide = (slideId: string) => {
+    Alert.alert(t('storyDetail.deleteSlideConfirmTitle'), t('storyDetail.deleteConfirmBody'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.delete'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            const media = mediaById[slides.find((s) => s.id === slideId)?.mediaId ?? ''];
+            await deleteSlide(slideId);
+            if (media) await deleteMedia(media);
+            refreshSlides();
+          } catch (e) {
+            Alert.alert(t('common.error'), e instanceof Error ? e.message : undefined);
+          }
+        },
+      },
+    ]);
+  };
+
   return (
     <Screen title={story.title} showBackButton>
       <Input value={title} onChangeText={setTitle} editable={isOwner} placeholder={t('newStory.titlePlaceholder')} />
@@ -127,11 +163,41 @@ export default function StoryDetailScreen() {
         <Button label={t('common.save')} onPress={handleSave} disabled={saving || !title.trim()} />
       ) : null}
 
-      <EmptyState
-        icon={{ ios: 'rectangle.stack.badge.plus', android: 'add_to_photos', web: 'add_to_photos' }}
-        title={t('storyDetail.noSlidesTitle')}
-        subtitle={t('storyDetail.noSlidesSubtitle')}
-      />
+      <View style={styles.slidesSection}>
+        <ThemedText type="smallBold" themeColor="textSecondary">
+          {t('storyDetail.slidesTitle')}
+        </ThemedText>
+
+        {slidesLoading ? (
+          <ActivityIndicator />
+        ) : slides.length === 0 ? (
+          <EmptyState
+            icon={{ ios: 'rectangle.stack.badge.plus', android: 'add_to_photos', web: 'add_to_photos' }}
+            title={t('storyDetail.noSlidesTitle')}
+            subtitle={t('storyDetail.noSlidesSubtitle')}
+          />
+        ) : (
+          <View style={styles.slideList}>
+            {slides.map((slide, index) => (
+              <SlideRow
+                key={slide.id}
+                slide={slide}
+                media={slide.mediaId ? mediaById[slide.mediaId] : undefined}
+                canMoveUp={index > 0}
+                canMoveDown={index < slides.length - 1}
+                onMoveUp={() => move(index, -1)}
+                onMoveDown={() => move(index, 1)}
+                onDelete={() => handleDeleteSlide(slide.id)}
+                onCaptionChange={(text) => handleCaptionChange(slide.id, text)}
+              />
+            ))}
+          </View>
+        )}
+
+        {isOwner ? (
+          <AddSlideButtons storyId={story.id} nextOrderIndex={slides.length} onAdded={refreshSlides} />
+        ) : null}
+      </View>
 
       {isOwner ? (
         <Button
@@ -154,6 +220,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.two,
     marginTop: Spacing.six,
+  },
+  slidesSection: {
+    gap: Spacing.three,
+  },
+  slideList: {
+    gap: Spacing.one,
   },
   deleteButton: {
     marginTop: Spacing.four,

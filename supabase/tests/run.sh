@@ -16,6 +16,7 @@ dropdb --if-exists "$DB_NAME"
 createdb "$DB_NAME"
 
 psql -v ON_ERROR_STOP=1 -d "$DB_NAME" -f "$SCRIPT_DIR/stub_auth.sql"
+psql -v ON_ERROR_STOP=1 -d "$DB_NAME" -f "$SCRIPT_DIR/stub_storage.sql"
 
 for migration in "$MIGRATIONS_DIR"/*.sql; do
   echo "Applying $(basename "$migration")..."

@@ -89,9 +89,10 @@ npm install
 ### Supabase project setup
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. In the SQL Editor, run the files in `supabase/migrations/` **in order**
-   (`20260902010000_schema.sql` then `20260902010100_rls.sql`) — or, if you
-   use the Supabase CLI and have it linked to your project, `supabase db push`.
+2. In the SQL Editor, run the files in `supabase/migrations/` **in
+   filename order** (schema, then RLS, then storage) — or, if you use the
+   Supabase CLI and have it linked to your project, `supabase db push`.
+   This also creates the private `media` Storage bucket.
 3. In Project Settings → API, copy the Project URL and the `anon` public key.
 4. Copy `.env.example` to `.env` and fill them in:
 
@@ -190,8 +191,39 @@ Development proceeds in phases (see the project plan).
   empty list when signed out, and every data fetch has a real error +
   retry state — no infinite spinners on a failed request.
 
-Not yet implemented: media upload, the Story Viewer/Editor (slides),
-search, tags, comments, team sharing, and export.
+**Phase 4 — Slides and media upload** ✅
+
+- Supabase Storage: a private `media` bucket with RLS on
+  `storage.objects` (`supabase/migrations/20260902020000_storage.sql`),
+  keyed by `stories/<story_id>/<file>` so access can be checked from the
+  path itself — no chicken-and-egg problem with the `media` metadata row
+  not existing yet at upload time. Reading anything back uses a signed URL
+  (`getSignedUrl`), since the bucket isn't public.
+- Story detail now has a Slides section: add a slide from the camera,
+  video capture, the photo/video library, or as text-only
+  (`AddSlideButtons`), with an inline editable caption per slide
+  (`SlideRow`), reorder via up/down, and delete (which also removes the
+  slide's media from Storage, not just the database row).
+- Video slides get a generated JPEG thumbnail (`expo-video-thumbnails`,
+  native-only — skipped on web); images use the image itself.
+- `supabase/tests/`: extended with a `storage` schema stub
+  (`storage.foldername()` included) and scenario checks for the new
+  bucket policies — owner can upload/delete, a viewer can read but not
+  upload or delete, and access follows the same share-link rules as the
+  story itself.
+
+Not yet implemented: the swipeable Story Viewer (Phase 5 — slides can be
+added and edited now, but there's no Instagram-style full-screen playback
+yet), search, tags, comments, team sharing, and export.
+
+> **Testing note:** media upload and the Story Viewer both need a real,
+> configured Supabase project (camera/gallery access and Storage uploads
+> can't be exercised in a sandboxed CI-style environment). The schema, RLS,
+> and storage policies were verified against a real local Postgres
+> instance (`supabase/tests/run.sh`); the upload/slide-editing UI itself
+> has been type-checked, linted, and smoke-tested for crashes, but not yet
+> exercised end-to-end against a live project — please try the full
+> capture → add slide → reorder → delete flow once you've set up Supabase.
 
 ## Database schema
 
