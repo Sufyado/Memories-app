@@ -9,7 +9,6 @@ import { useCreateFolder } from '@/features/folders/hooks';
 
 export default function CreateScreen() {
   const { t } = useTranslation();
-  const theme = useTheme();
   const createFolder = useCreateFolder();
   const [newFolderVisible, setNewFolderVisible] = useState(false);
 

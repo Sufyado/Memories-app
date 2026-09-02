@@ -35,7 +35,7 @@ export default function PublicStoryViewerScreen() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const progress = useRef(new Animated.Value(0)).current;
+  const [progress] = useState(() => new Animated.Value(0));
   const pausedValueRef = useRef(0);
 
   const currentSlide = slides[currentIndex];

@@ -7,8 +7,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
 import { queryClient } from '@/lib/queryClient';
-import { ThemeProvider } from '@/design-system';
-import { LoadingView } from '@/design-system';
+import { LoadingView, ThemeProvider } from '@/design-system';
 import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
 import { LanguageProvider } from '@/lib/LanguageProvider';
 

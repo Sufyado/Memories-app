@@ -10,7 +10,7 @@ import { useStory, useUpdateStoryMeta, usePublishStoryVersion } from '@/features
 import { useCreateSlide, useDeleteSlide, useDuplicateSlide, useReorderSlides, useSlides, useUpdateSlideBlocks } from '@/features/slides/hooks';
 import { useMediaMap } from '@/features/media/hooks';
 import { MediaThumbnail } from '@/features/media/components/MediaThumbnail';
-import { blocksToForm, emptySlideForm, formToBlocks, isSlideFormEmpty, type SlideForm } from '@/features/slides/blocks';
+import { blocksToForm, emptySlideForm, formToBlocks, type SlideForm } from '@/features/slides/blocks';
 import { SlideEditorModal } from '@/features/slides/components/SlideEditorModal';
 import { parseSlideBlocks, type StorySlide } from '@/types/domain';
 import type { Json } from '@/types/database';

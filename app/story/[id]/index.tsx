@@ -31,7 +31,7 @@ export default function StoryViewerScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
-  const progress = useRef(new Animated.Value(0)).current;
+  const [progress] = useState(() => new Animated.Value(0));
   const pausedValueRef = useRef(0);
 
   const currentSlide = slides[currentIndex];

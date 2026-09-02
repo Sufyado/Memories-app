@@ -18,7 +18,23 @@ type SlideEditorModalProps = {
   onCancel: () => void;
 };
 
-export function SlideEditorModal({ visible, storyId, slideId, initialForm, onSave, onCancel }: SlideEditorModalProps) {
+export function SlideEditorModal({ visible, onCancel, ...rest }: SlideEditorModalProps) {
+  return (
+    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onCancel}>
+      {/* Mounted only while visible, so form state starts fresh from initialForm every time a
+       * slide is opened — avoids syncing state from a prop via an effect. */}
+      {visible ? <SlideEditorModalContent onCancel={onCancel} {...rest} /> : null}
+    </Modal>
+  );
+}
+
+function SlideEditorModalContent({
+  storyId,
+  slideId,
+  initialForm,
+  onSave,
+  onCancel,
+}: Omit<SlideEditorModalProps, 'visible'>) {
   const { t } = useTranslation();
   const theme = useTheme();
   const [form, setForm] = useState<SlideForm>(initialForm);
@@ -27,11 +43,6 @@ export function SlideEditorModal({ visible, storyId, slideId, initialForm, onSav
   const mediaMap = useMediaMap(storyId);
   const uploadMedia = useUploadMedia(storyId);
   const deleteMedia = useDeleteMedia(storyId);
-
-  React.useEffect(() => {
-    if (visible) setForm(initialForm);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible, slideId]);
 
   async function handlePickMedia(source: 'camera-photo' | 'camera-video' | 'library') {
     const asset =
@@ -68,8 +79,7 @@ export function SlideEditorModal({ visible, storyId, slideId, initialForm, onSav
   const media = form.mediaId ? mediaMap[form.mediaId] : undefined;
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onCancel}>
-      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <View
           style={{
             flexDirection: 'row',
@@ -152,7 +162,6 @@ export function SlideEditorModal({ visible, storyId, slideId, initialForm, onSav
           <OptionalBlocksEditor form={form} setForm={setForm} />
         </ScrollView>
       </View>
-    </Modal>
   );
 }
 
