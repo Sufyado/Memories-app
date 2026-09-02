@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Pressable, Share, StatusBar, View } from 'react-native';
+import { Animated, Pressable, StatusBar, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,8 +10,6 @@ import { useStory } from '@/features/stories/hooks';
 import { useSlides } from '@/features/slides/hooks';
 import { useMediaMap } from '@/features/media/hooks';
 import { useMyStoryRole, canEdit } from '@/features/stories/roles';
-import { useActiveShareLink, useCreateShareLink } from '@/features/sharing/hooks';
-import { getShareUrl } from '@/features/sharing/url';
 import { parseSlideBlocks } from '@/types/domain';
 import { StoryProgressBar } from '@/features/stories/viewer/StoryProgressBar';
 import { SlideContent } from '@/features/stories/viewer/SlideContent';
@@ -27,8 +25,6 @@ export default function StoryViewerScreen() {
   const slidesQuery = useSlides(id);
   const mediaMap = useMediaMap(id);
   const role = useMyStoryRole(id);
-  const shareLink = useActiveShareLink(id);
-  const createShareLink = useCreateShareLink(id, story.data?.title ?? '');
 
   const slides = useMemo(() => (slidesQuery.data ?? []).map(parseSlideBlocks), [slidesQuery.data]);
 
@@ -86,14 +82,6 @@ export default function StoryViewerScreen() {
     }
   }
 
-  async function onShare() {
-    let link = shareLink.data;
-    if (!link) {
-      link = await createShareLink.mutateAsync();
-    }
-    await Share.share({ message: getShareUrl(link.slug), url: getShareUrl(link.slug) });
-  }
-
   if (story.isLoading || slidesQuery.isLoading) return <LoadingView />;
   if (!story.data) return null;
 
@@ -148,7 +136,11 @@ export default function StoryViewerScreen() {
           <IconButton accessibilityLabel={t('story.viewerInfo')} variant="overlay" onPress={() => setInfoVisible(true)}>
             <Ionicons name="chatbubble-ellipses-outline" size={20} color="#fff" />
           </IconButton>
-          <IconButton accessibilityLabel={t('common.share')} variant="overlay" onPress={onShare}>
+          <IconButton
+            accessibilityLabel={t('common.share')}
+            variant="overlay"
+            onPress={() => router.push(`/story/${id}/share`)}
+          >
             <Ionicons name="share-outline" size={20} color="#fff" />
           </IconButton>
           {canEdit(role.data) ? (

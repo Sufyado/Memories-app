@@ -18,12 +18,14 @@ export interface Database {
           id: string;
           full_name: string | null;
           avatar_url: string | null;
+          email: string | null;
           created_at: string;
         };
         Insert: {
           id: string;
           full_name?: string | null;
           avatar_url?: string | null;
+          email?: string | null;
           created_at?: string;
         };
         Update: Partial<Database['public']['Tables']['profiles']['Insert']>;

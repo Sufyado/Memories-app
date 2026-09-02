@@ -22,9 +22,11 @@ function RootNavigator() {
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(app)" />
         <Stack.Screen name="folder/[id]" />
+        <Stack.Screen name="tag/[id]" />
         <Stack.Screen name="story/new" options={{ presentation: 'modal' }} />
         <Stack.Screen name="story/[id]/index" options={{ animation: 'fade' }} />
         <Stack.Screen name="story/[id]/edit" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="story/[id]/share" options={{ presentation: 'modal' }} />
       </Stack.Protected>
       <Stack.Protected guard={!session}>
         <Stack.Screen name="(auth)" />
