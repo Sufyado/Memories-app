@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import type { Json } from '@/types/database';
 import type { Story } from '@/types/domain';
 
 export type StoryWithSlideCount = Story & { slide_count: number };
@@ -93,4 +94,12 @@ export async function updateStoryMeta(
 export async function deleteStory(id: string): Promise<void> {
   const { error } = await supabase.from('stories').delete().eq('id', id);
   if (error) throw error;
+}
+
+/** Publishes edits: snapshots the story+slides, bumps `version`, records a story_versions row. */
+export async function publishStoryVersion(id: string, snapshot: Json): Promise<number> {
+  const { data, error } = await supabase.rpc('bump_story_version', { p_story_id: id, p_snapshot: snapshot });
+  if (error) throw error;
+  await supabase.from('stories').update({ status: 'published' }).eq('id', id).eq('status', 'draft');
+  return data;
 }

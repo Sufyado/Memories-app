@@ -69,3 +69,15 @@ export function useDeleteStory() {
     },
   });
 }
+
+export function usePublishStoryVersion() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (input: { id: string; snapshot: Parameters<typeof api.publishStoryVersion>[1] }) =>
+      api.publishStoryVersion(input.id, input.snapshot),
+    onSuccess: (_version, input) => {
+      queryClient.invalidateQueries({ queryKey: ['story', input.id] });
+      queryClient.invalidateQueries({ queryKey: ['stories'] });
+    },
+  });
+}

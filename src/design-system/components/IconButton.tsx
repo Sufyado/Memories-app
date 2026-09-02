@@ -6,6 +6,8 @@ import { useTheme } from '../ThemeProvider';
 type IconButtonProps = {
   children: React.ReactNode;
   onPress?: () => void;
+  onPressIn?: () => void;
+  onLongPress?: () => void;
   size?: number;
   variant?: 'solid' | 'ghost' | 'overlay';
   style?: ViewStyle;
@@ -15,6 +17,8 @@ type IconButtonProps = {
 export function IconButton({
   children,
   onPress,
+  onPressIn,
+  onLongPress,
   size = 40,
   variant = 'ghost',
   style,
@@ -32,6 +36,8 @@ export function IconButton({
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       onPress={onPress}
+      onPressIn={onPressIn}
+      onLongPress={onLongPress}
       hitSlop={8}
       style={({ pressed }) => [
         {

@@ -27,7 +27,7 @@ export type SlideBlock =
   | { id: string; type: 'link'; url: string; label?: string }
   | { id: string; type: 'file'; mediaId: string; label?: string };
 
-export type StorySlide = StorySlideRow & { blocks: SlideBlock[] };
+export type StorySlide = Omit<StorySlideRow, 'blocks'> & { blocks: SlideBlock[] };
 
 export function parseSlideBlocks(row: StorySlideRow): StorySlide {
   return { ...row, blocks: Array.isArray(row.blocks) ? (row.blocks as unknown as SlideBlock[]) : [] };
