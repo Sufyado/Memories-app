@@ -23,6 +23,10 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="auth/sign-in" options={{ presentation: 'modal' }} />
             <Stack.Screen name="auth/sign-up" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="create/new-folder" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="create/new-story" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="library/[folderId]" />
+            <Stack.Screen name="story/[id]" />
           </Stack>
         </AuthProvider>
       </I18nProvider>

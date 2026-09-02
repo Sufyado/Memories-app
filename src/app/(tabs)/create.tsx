@@ -1,15 +1,27 @@
-import { Alert, Pressable, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
+import { Pressable, StyleSheet } from 'react-native';
 import { SymbolView } from 'expo-symbols';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Screen } from '@/components/ui/screen';
+import { SignInPrompt } from '@/components/ui/sign-in-prompt';
 import { Spacing } from '@/constants/theme';
+import { useAuth } from '@/lib/auth/auth-provider';
 import { useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/lib/i18n';
 
 export default function CreateScreen() {
   const { t } = useI18n();
+  const { user } = useAuth();
+
+  if (!user) {
+    return (
+      <Screen title={t('create.title')} scroll={false}>
+        <SignInPrompt title={t('create.signInTitle')} subtitle={t('create.signInRequired')} />
+      </Screen>
+    );
+  }
 
   return (
     <Screen title={t('create.title')} scroll={false}>
@@ -17,13 +29,13 @@ export default function CreateScreen() {
         icon={{ ios: 'play.rectangle.on.rectangle', android: 'video_library', web: 'video_library' }}
         title={t('create.newStory')}
         subtitle={t('create.newStorySubtitle')}
-        onPress={() => Alert.alert(t('create.newStory'), t('common.comingSoon'))}
+        onPress={() => router.push('/create/new-story')}
       />
       <CreateOption
         icon={{ ios: 'folder.badge.plus', android: 'create_new_folder', web: 'create_new_folder' }}
         title={t('create.newFolder')}
         subtitle={t('create.newFolderSubtitle')}
-        onPress={() => Alert.alert(t('create.newFolder'), t('common.comingSoon'))}
+        onPress={() => router.push('/create/new-folder')}
       />
     </Screen>
   );

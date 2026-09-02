@@ -15,13 +15,18 @@ export const ar: TranslationSchema = {
     collections: 'المجموعات',
     emptyTitle: 'أرشيفك فارغ',
     emptySubtitle: 'التقط ذكرى أو وثّق إجراءً للبدء.',
+    signInTitle: 'سجّل الدخول لرؤية أرشيفك',
+    signInSubtitle: 'أنشئ حسابًا أو سجّل الدخول لبدء التقاط الذكريات.',
   },
   library: {
     title: 'المكتبة',
     grid: 'شبكة',
     list: 'قائمة',
+    storiesCount: 'قصص',
     emptyTitle: 'لا يوجد شيء هنا بعد',
     emptySubtitle: 'ستظهر هنا المجلدات والقصص التي تنشئها.',
+    signInTitle: 'سجّل الدخول لرؤية مكتبتك',
+    signInSubtitle: 'أنشئ حسابًا أو سجّل الدخول لتنظيم قصصك.',
   },
   search: {
     title: 'بحث',
@@ -35,6 +40,27 @@ export const ar: TranslationSchema = {
     newStorySubtitle: 'التقط صورًا وفيديوهات وملاحظات كشرائح',
     newFolder: 'مجلد جديد',
     newFolderSubtitle: 'نظّم القصص ضمن مجموعة',
+    signInTitle: 'سجّل الدخول للإنشاء',
+    signInRequired: 'سجّل الدخول لإنشاء مجلدات وقصص.',
+  },
+  newFolder: {
+    title: 'مجلد جديد',
+    namePlaceholder: 'اسم المجلد',
+    create: 'إنشاء المجلد',
+  },
+  newStory: {
+    title: 'قصة جديدة',
+    titlePlaceholder: 'عنوان القصة',
+    create: 'إنشاء القصة',
+  },
+  storyDetail: {
+    descriptionPlaceholder: 'لا يوجد وصف بعد.',
+    noSlidesTitle: 'لا توجد شرائح بعد',
+    noSlidesSubtitle: 'إضافة الشرائح ستكون متاحة في المرحلة القادمة.',
+    deleteStory: 'حذف القصة',
+    deleteConfirmTitle: 'هل تريد حذف هذه القصة؟',
+    deleteConfirmBody: 'لا يمكن التراجع عن هذا الإجراء.',
+    notFound: 'القصة غير موجودة',
   },
   profile: {
     title: 'الملف الشخصي',
@@ -61,6 +87,9 @@ export const ar: TranslationSchema = {
   common: {
     cancel: 'إلغاء',
     save: 'حفظ',
+    delete: 'حذف',
+    retry: 'إعادة المحاولة',
     comingSoon: 'قريبًا',
+    error: 'حدث خطأ ما.',
   },
 };

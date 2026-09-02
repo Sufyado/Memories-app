@@ -1,38 +1,40 @@
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import { ThemedText } from '@/components/themed-text';
 import { LayoutToggle } from '@/components/library/layout-toggle';
 import { LibraryList, type LibraryLayout } from '@/components/library/library-list';
+import { ThemedText } from '@/components/themed-text';
 import { Button } from '@/components/ui/button';
 import { Screen } from '@/components/ui/screen';
-import { SignInPrompt } from '@/components/ui/sign-in-prompt';
 import { Spacing } from '@/constants/theme';
-import { useAuth } from '@/lib/auth/auth-provider';
+import { getFolder } from '@/lib/data/folders';
 import { useLibrary, type FolderWithCount } from '@/lib/data/use-library';
 import { useI18n } from '@/lib/i18n';
-import type { Story } from '@/types/domain';
+import type { Folder, Story } from '@/types/domain';
 
-export default function LibraryScreen() {
+export default function FolderScreen() {
+  const { folderId } = useLocalSearchParams<{ folderId: string }>();
   const { t } = useI18n();
-  const { user } = useAuth();
   const [layout, setLayout] = useState<LibraryLayout>('grid');
-  const { folders, stories, loading, error, refresh } = useLibrary(null);
+  const [folder, setFolder] = useState<Folder | null>(null);
+  const { folders, stories, loading, error, refresh } = useLibrary(folderId ?? null);
 
-  if (!user) {
-    return (
-      <Screen title={t('library.title')}>
-        <SignInPrompt title={t('library.signInTitle')} subtitle={t('library.signInSubtitle')} />
-      </Screen>
-    );
-  }
+  useEffect(() => {
+    // Folder metadata (just the title) is secondary to the folders/stories
+    // list below, which has its own error + retry UI via useLibrary — so a
+    // failure here is swallowed rather than duplicating that error state.
+    if (folderId) getFolder(folderId).then(setFolder).catch(() => {});
+  }, [folderId]);
 
-  const handleFolderPress = (folder: FolderWithCount) => router.push(`/library/${folder.id}`);
+  const handleFolderPress = (child: FolderWithCount) => router.push(`/library/${child.id}`);
   const handleStoryPress = (story: Story) => router.push(`/story/${story.id}`);
 
   return (
-    <Screen title={t('library.title')} headerRight={<LayoutToggle layout={layout} onChange={setLayout} />}>
+    <Screen
+      title={folder?.name ?? ''}
+      showBackButton
+      headerRight={<LayoutToggle layout={layout} onChange={setLayout} />}>
       {loading ? (
         <ActivityIndicator style={styles.spinner} />
       ) : error ? (

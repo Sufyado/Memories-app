@@ -13,13 +13,18 @@ export const en = {
     collections: 'Collections',
     emptyTitle: 'Your archive is empty',
     emptySubtitle: 'Capture a memory or document a process to get started.',
+    signInTitle: 'Sign in to see your archive',
+    signInSubtitle: 'Create an account or sign in to start capturing memories.',
   },
   library: {
     title: 'Library',
     grid: 'Grid',
     list: 'List',
+    storiesCount: 'stories',
     emptyTitle: 'Nothing here yet',
     emptySubtitle: 'Folders and stories you create will show up here.',
+    signInTitle: 'Sign in to see your library',
+    signInSubtitle: 'Create an account or sign in to organize your stories.',
   },
   search: {
     title: 'Search',
@@ -33,6 +38,27 @@ export const en = {
     newStorySubtitle: 'Capture photos, videos, and notes as slides',
     newFolder: 'New Folder',
     newFolderSubtitle: 'Organize stories into a collection',
+    signInTitle: 'Sign in to create',
+    signInRequired: 'Sign in to create folders and stories.',
+  },
+  newFolder: {
+    title: 'New Folder',
+    namePlaceholder: 'Folder name',
+    create: 'Create folder',
+  },
+  newStory: {
+    title: 'New Story',
+    titlePlaceholder: 'Story title',
+    create: 'Create story',
+  },
+  storyDetail: {
+    descriptionPlaceholder: 'No description yet.',
+    noSlidesTitle: 'No slides yet',
+    noSlidesSubtitle: 'Slide capture is coming in the next phase.',
+    deleteStory: 'Delete story',
+    deleteConfirmTitle: 'Delete this story?',
+    deleteConfirmBody: 'This cannot be undone.',
+    notFound: 'Story not found',
   },
   profile: {
     title: 'Profile',
@@ -59,7 +85,10 @@ export const en = {
   common: {
     cancel: 'Cancel',
     save: 'Save',
+    delete: 'Delete',
+    retry: 'Retry',
     comingSoon: 'Coming soon',
+    error: 'Something went wrong.',
   },
 };
 

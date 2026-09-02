@@ -1,19 +1,24 @@
+import { router } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { type ReactNode } from 'react';
-import { Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing, WebTopNavInset } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
+import { useI18n } from '@/lib/i18n';
 
 export type ScreenProps = {
   title?: string;
   children: ReactNode;
   scroll?: boolean;
   headerRight?: ReactNode;
+  showBackButton?: boolean;
 };
 
-export function Screen({ title, children, scroll = true, headerRight }: ScreenProps) {
+export function Screen({ title, children, scroll = true, headerRight, showBackButton }: ScreenProps) {
   const insets = useSafeAreaInsets();
   const Container = scroll ? ScrollView : View;
   const paddingTop = insets.top + WebTopNavInset + Spacing.four;
@@ -28,9 +33,10 @@ export function Screen({ title, children, scroll = true, headerRight }: ScreenPr
             : undefined
         }>
         <View style={[styles.inner, !scroll && { paddingTop, flex: 1 }]}>
-          {title ? (
+          {title || showBackButton ? (
             <View style={styles.header}>
-              <ThemedText type="title" style={styles.headerTitle}>
+              {showBackButton ? <BackButton /> : null}
+              <ThemedText type="title" style={[styles.headerTitle, styles.grow]} numberOfLines={1}>
                 {title}
               </ThemedText>
               {headerRight}
@@ -40,6 +46,27 @@ export function Screen({ title, children, scroll = true, headerRight }: ScreenPr
         </View>
       </Container>
     </ThemedView>
+  );
+}
+
+function BackButton() {
+  const theme = useTheme();
+  const { isRTL } = useI18n();
+
+  return (
+    <Pressable accessibilityRole="button" onPress={() => router.back()}>
+      <ThemedView type="backgroundElement" style={styles.backButtonInner}>
+        <SymbolView
+          name={{
+            ios: isRTL ? 'chevron.right' : 'chevron.left',
+            android: isRTL ? 'arrow_forward' : 'arrow_back',
+            web: isRTL ? 'arrow_forward' : 'arrow_back',
+          }}
+          tintColor={theme.text}
+          size={18}
+        />
+      </ThemedView>
+    </Pressable>
   );
 }
 
@@ -63,10 +90,20 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: Spacing.three,
+  },
+  grow: {
+    flex: 1,
   },
   headerTitle: {
     fontSize: 32,
     lineHeight: 38,
+  },
+  backButtonInner: {
+    width: 40,
+    height: 40,
+    borderRadius: Spacing.five,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

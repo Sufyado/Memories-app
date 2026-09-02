@@ -47,18 +47,24 @@ change — see `src/types/domain.ts` for the shared shape.
 ```
 src/
   app/
-    (tabs)/              Home, Library, Search, Create, Profile
-    auth/                Sign in / sign up (modal routes)
-  components/            Reusable UI (themed-text, themed-view, app-tabs, ui/*)
-  constants/              Design tokens: colors, spacing, typography
-  hooks/                  useTheme, useColorScheme
+    (tabs)/                Home, Library, Search, Create, Profile
+    auth/                  Sign in / sign up (modal routes)
+    create/                New Folder / New Story (modal routes)
+    library/[folderId].tsx Drill into a folder
+    story/[id].tsx          Story detail (title/description, delete)
+  components/
+    library/                Folder/story cards, grid-list toggle
+    ui/                      Screen, Button, Input, EmptyState, SignInPrompt, …
+  constants/                Design tokens: colors, spacing, typography
+  hooks/                    useTheme, useColorScheme
   lib/
-    i18n/                 Arabic/English translations + RTL-aware provider
-    supabase/client.ts     Supabase client (reads EXPO_PUBLIC_ env vars)
-    auth/auth-provider.tsx Session state + sign in/up/out
+    i18n/                   Arabic/English translations + RTL-aware provider
+    supabase/                Client + hand-written Database types
+    auth/auth-provider.tsx   Session state + sign in/up/out
+    data/                    Supabase queries for folders/stories
   types/
-    domain.ts             Shared domain types (Folder, Story, Slide, Media, …)
-assets/                   Icons, splash, tab bar assets
+    domain.ts               Shared domain types (Folder, Story, Slide, Media, …)
+assets/                     Icons, splash, tab bar assets
 supabase/
   migrations/              Schema + Row Level Security, in apply order
   tests/                   Local-only RLS test harness (see below)
@@ -169,9 +175,23 @@ Development proceeds in phases (see the project plan).
   persisted via `AsyncStorage`, wired into the Profile screen's
   sign in/out and new Sign in / Sign up screens.
 
-Not yet implemented: folders/stories CRUD, media upload, the Story
-Viewer/Editor, search, tags, comments, team sharing, and export. Screens
-for those areas currently show placeholder empty states.
+**Phase 3 — Folders, Stories, Library** ✅
+
+- Data layer (`src/lib/data/`) talking to Supabase directly (typed via
+  `src/lib/supabase/database.types.ts`), scoped to the signed-in user.
+- Home: recent stories + top-level collections. Library: Grid/List
+  toggle, folders with story counts, drilling into a folder
+  (`/library/[folderId]`) with back navigation.
+- Create → New Folder / New Story (`/create/new-folder`,
+  `/create/new-story`) actually insert rows now.
+- A minimal story detail screen (`/story/[id]`): edit title/description,
+  delete (with confirmation), a "no slides yet" placeholder for Phase 4.
+- Every screen that needs an account shows a sign-in prompt instead of an
+  empty list when signed out, and every data fetch has a real error +
+  retry state — no infinite spinners on a failed request.
+
+Not yet implemented: media upload, the Story Viewer/Editor (slides),
+search, tags, comments, team sharing, and export.
 
 ## Database schema
 

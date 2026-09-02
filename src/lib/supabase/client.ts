@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
 
+import type { Database } from './database.types';
+
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -19,7 +21,7 @@ export const isSupabaseConfigured = Boolean(
 // so supabase-js falls back to its own SSR-safe in-memory default.
 const isServerSideRendering = Platform.OS === 'web' && typeof window === 'undefined';
 
-export const supabase = createClient(
+export const supabase = createClient<Database>(
   supabaseUrl || 'https://placeholder.supabase.co',
   supabaseAnonKey || 'placeholder-anon-key',
   {
