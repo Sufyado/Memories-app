@@ -258,6 +258,70 @@ end
 $$;
 commit;
 
+-- search_stories(): matches by title (RLS still applies per row — a
+-- matching title does not leak a story to someone with no access to it).
+insert into auth.users (id, email) values ('00000000-0000-0000-0000-000000000003', 'charlie@example.com');
+
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001';
+do $$
+declare
+  cnt integer;
+begin
+  select count(*) into cnt from public.search_stories('private');
+  assert cnt = 1, 'FAIL: owner alice should find her story by title';
+  raise notice 'PASS: owner alice finds her story via search_stories() by title';
+end
+$$;
+commit;
+
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000002';
+do $$
+declare
+  cnt integer;
+begin
+  select count(*) into cnt from public.search_stories('private');
+  assert cnt = 1, 'FAIL: viewer bob (has access) should find the story too';
+  raise notice 'PASS: viewer bob finds the shared story via search_stories()';
+end
+$$;
+commit;
+
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000003';
+do $$
+declare
+  cnt integer;
+begin
+  select count(*) into cnt from public.search_stories('private');
+  assert cnt = 0, 'FAIL: charlie has no access — a title match must not leak the story to him';
+  raise notice 'PASS: search_stories() does not leak a story charlie has no access to';
+end
+$$;
+commit;
+
+-- Tag search.
+begin;
+set local role authenticated;
+set local request.jwt.claim.sub = '00000000-0000-0000-0000-000000000001';
+insert into public.tags (id, name) values ('20000000-0000-0000-0000-000000000001', 'seeds');
+insert into public.story_tags (story_id, tag_id)
+values ('10000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001');
+do $$
+declare
+  cnt integer;
+begin
+  select count(*) into cnt from public.search_stories('seeds');
+  assert cnt = 1, 'FAIL: owner alice should find her story by tag name';
+  raise notice 'PASS: owner alice finds her story via search_stories() by tag';
+end
+$$;
+commit;
+
 do $$
 begin
   raise notice 'ALL SCENARIO CHECKS PASSED';

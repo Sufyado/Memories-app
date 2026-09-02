@@ -107,3 +107,17 @@ export async function deleteStory(id: string): Promise<void> {
   const { error } = await supabase.from('stories').delete().eq('id', id);
   if (error) throw error;
 }
+
+/**
+ * Full-text search across story title/description, slide text, tag
+ * names, and folder names (`search_stories` SQL function). Row Level
+ * Security still applies per row, so a text match never surfaces a story
+ * the caller has no access to.
+ */
+export async function searchStories(query: string): Promise<Story[]> {
+  const trimmed = query.trim();
+  if (!trimmed) return [];
+  const { data, error } = await supabase.rpc('search_stories', { search_query: trimmed });
+  if (error) throw error;
+  return (data ?? []).map(mapStory);
+}

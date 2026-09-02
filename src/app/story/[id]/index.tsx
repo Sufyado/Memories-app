@@ -5,6 +5,7 @@ import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from 'react-nat
 
 import { AddSlideButtons } from '@/components/story/add-slide-buttons';
 import { SlideRow } from '@/components/story/slide-row';
+import { TagChips } from '@/components/story/tag-chips';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ import { deleteMedia } from '@/lib/data/media';
 import { deleteSlide, duplicateSlide, updateSlideBlocks } from '@/lib/data/slides';
 import { deleteStory, getStory, updateStory } from '@/lib/data/stories';
 import { useSlides } from '@/lib/data/use-slides';
+import { useStoryTags } from '@/lib/data/use-tags';
 import { useI18n } from '@/lib/i18n';
 import type { Story } from '@/types/domain';
 
@@ -35,6 +37,8 @@ export default function StoryDetailScreen() {
   const [deleting, setDeleting] = useState(false);
 
   const { slides, mediaById, loading: slidesLoading, refresh: refreshSlides, move } = useSlides(story?.id);
+  const { tags, add: addTag, remove: removeTag } = useStoryTags(story?.id);
+  const [newTag, setNewTag] = useState('');
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -164,6 +168,17 @@ export default function StoryDetailScreen() {
     ]);
   };
 
+  const handleAddTag = async () => {
+    if (!newTag.trim()) return;
+    const value = newTag.trim();
+    setNewTag('');
+    try {
+      await addTag(value);
+    } catch (e) {
+      Alert.alert(t('common.error'), e instanceof Error ? e.message : undefined);
+    }
+  };
+
   return (
     <Screen
       title={story.title}
@@ -226,6 +241,26 @@ export default function StoryDetailScreen() {
         ) : null}
       </View>
 
+      <View style={styles.tagsSection}>
+        <ThemedText type="smallBold" themeColor="textSecondary">
+          {t('storyDetail.tagsTitle')}
+        </ThemedText>
+        <TagChips tags={tags} onRemove={isOwner ? (tag) => removeTag(tag.id) : undefined} />
+        {isOwner ? (
+          <View style={styles.tagInputRow}>
+            <View style={styles.tagInputField}>
+              <Input
+                value={newTag}
+                onChangeText={setNewTag}
+                onSubmitEditing={handleAddTag}
+                placeholder={t('storyDetail.tagPlaceholder')}
+              />
+            </View>
+            <Button label={t('common.save')} variant="secondary" onPress={handleAddTag} disabled={!newTag.trim()} />
+          </View>
+        ) : null}
+      </View>
+
       {isOwner ? (
         <Button
           label={t('storyDetail.deleteStory')}
@@ -242,6 +277,17 @@ export default function StoryDetailScreen() {
 const styles = StyleSheet.create({
   spinner: {
     marginTop: Spacing.six,
+  },
+  tagsSection: {
+    gap: Spacing.two,
+  },
+  tagInputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  tagInputField: {
+    flex: 1,
   },
   previewButton: {
     width: 40,

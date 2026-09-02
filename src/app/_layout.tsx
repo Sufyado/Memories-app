@@ -28,6 +28,7 @@ export default function RootLayout() {
             <Stack.Screen name="library/[folderId]" />
             <Stack.Screen name="story/[id]/index" />
             <Stack.Screen name="story/[id]/view" options={{ presentation: 'fullScreenModal', animation: 'fade' }} />
+            <Stack.Screen name="story/[id]/comments" options={{ presentation: 'modal' }} />
           </Stack>
         </AuthProvider>
       </I18nProvider>

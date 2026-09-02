@@ -31,6 +31,8 @@ export const en = {
     placeholder: 'Search stories, tags, notes…',
     emptyTitle: 'Search your archive',
     emptySubtitle: 'Find stories by title, tag, folder, or slide text.',
+    noResultsTitle: 'No matches',
+    noResultsSubtitle: 'Try a different word or tag.',
   },
   create: {
     title: 'Create',
@@ -68,6 +70,12 @@ export const en = {
     slideTextPlaceholder: 'Slide text',
     slideCaptionPlaceholder: 'Add a caption…',
     deleteSlideConfirmTitle: 'Delete this slide?',
+    tagsTitle: 'Tags',
+    tagPlaceholder: 'Add a tag…',
+    commentsTitle: 'Comments',
+    commentPlaceholder: 'Add a comment…',
+    noCommentsTitle: 'No comments yet',
+    noCommentsSubtitle: 'Be the first to say something.',
   },
   viewer: {
     edit: 'Edit',

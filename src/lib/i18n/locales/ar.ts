@@ -33,6 +33,8 @@ export const ar: TranslationSchema = {
     placeholder: 'ابحث في القصص والوسوم والملاحظات…',
     emptyTitle: 'ابحث في أرشيفك',
     emptySubtitle: 'اعثر على القصص عبر العنوان أو الوسم أو المجلد أو نص الشرائح.',
+    noResultsTitle: 'لا توجد نتائج',
+    noResultsSubtitle: 'جرّب كلمة أو وسمًا مختلفًا.',
   },
   create: {
     title: 'إنشاء',
@@ -70,6 +72,12 @@ export const ar: TranslationSchema = {
     slideTextPlaceholder: 'نص الشريحة',
     slideCaptionPlaceholder: 'أضف تعليقًا…',
     deleteSlideConfirmTitle: 'هل تريد حذف هذه الشريحة؟',
+    tagsTitle: 'الوسوم',
+    tagPlaceholder: 'أضف وسمًا…',
+    commentsTitle: 'التعليقات',
+    commentPlaceholder: 'أضف تعليقًا…',
+    noCommentsTitle: 'لا توجد تعليقات بعد',
+    noCommentsSubtitle: 'كن أول من يعلّق.',
   },
   viewer: {
     edit: 'تعديل',

@@ -52,11 +52,12 @@ src/
     create/                 New Folder / New Story (modal routes)
     library/[folderId].tsx  Drill into a folder
     story/[id]/
-      index.tsx              Editor (title/description, slides, delete)
+      index.tsx              Editor (title/description, slides, tags, delete)
       view.tsx                Viewer (full-screen slide playback)
+      comments.tsx             Story-level comments
   components/
     library/                 Folder/story cards, grid-list toggle
-    story/                   Slide row, add-slide buttons, progress bar
+    story/                   Slide row, add-slide buttons, progress bar, tag chips
     ui/                      Screen, Button, Input, EmptyState, SignInPrompt, …
   constants/                Design tokens: colors, spacing, typography
   hooks/                    useTheme, useColorScheme
@@ -64,7 +65,8 @@ src/
     i18n/                   Arabic/English translations + RTL-aware provider
     supabase/                Client + hand-written Database types
     auth/auth-provider.tsx   Session state + sign in/up/out
-    data/                    Supabase queries (folders/stories/slides/media)
+    data/                    Supabase queries (folders/stories/slides/media/
+                              tags/comments/profiles/search)
     media/                   Camera/gallery picking, video thumbnails
   types/
     domain.ts               Shared domain types (Folder, Story, Slide, Media, …)
@@ -240,7 +242,25 @@ Development proceeds in phases (see the project plan).
   media/caption) alongside the existing add/edit-caption/reorder/delete,
   plus a preview button that opens the Viewer.
 
-Not yet implemented: search, tags, comments, team sharing, and export.
+**Phase 6 — Search, Tags, Comments** ✅
+
+- Full-text search (`supabase/migrations/20260902030000_search.sql`,
+  `search_stories()`): matches story title/description, slide text, tag
+  names, and folder names. Runs `SECURITY INVOKER` (the default), so RLS
+  applies per row — a title/tag match never surfaces a story the caller
+  has no access to, verified in `supabase/tests/scenarios.sql` with a
+  third test user who has zero access. The Search tab is wired to it with
+  a 350ms debounce.
+- Tags: the story editor has a Tags section (add by name — reuses an
+  existing tag or creates one; remove). Tapping a tag in the Viewer's
+  info panel jumps to Search pre-filled with that tag.
+- Comments: `/story/[id]/comments`, reached from the Viewer's comment
+  button (no longer a "coming soon" placeholder) — a simple list with
+  author name + timestamp and a composer at the bottom. Story-level only
+  in V1, per spec; the schema already carries a nullable `slide_id` for
+  per-slide comments later.
+
+Not yet implemented: team sharing (roles, share links, Web Viewer) and export.
 
 > **Testing note:** media upload, video playback, and camera/gallery
 > access all need a real, configured Supabase project and a real
@@ -252,7 +272,12 @@ Not yet implemented: search, tags, comments, team sharing, and export.
 > crashes in a headless browser. The actual capture → add slide →
 > reorder/duplicate/delete → watch it play flow has not been exercised
 > end-to-end — please try it once you've set up Supabase and are running
-> on a device or in a browser with camera/file access.
+> on a device or in a browser with camera/file access. Search, tags, and
+> comments are in the same position: `search_stories()` and the RLS
+> around it are verified against real Postgres, and every screen using
+> them is smoke-tested for crashes, but querying real data (does the
+> right story actually come back for a given search term, does a posted
+> comment actually show up) needs that same live project.
 
 ## Database schema
 

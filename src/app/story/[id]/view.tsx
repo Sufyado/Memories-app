@@ -11,10 +11,11 @@ import { Button } from '@/components/ui/button';
 import { Spacing } from '@/constants/theme';
 import { useAuth } from '@/lib/auth/auth-provider';
 import { getStory } from '@/lib/data/stories';
+import { listStoryTags } from '@/lib/data/tags';
 import { useSlides } from '@/lib/data/use-slides';
 import { useSignedUrl } from '@/lib/data/use-signed-url';
 import { useI18n } from '@/lib/i18n';
-import type { Story } from '@/types/domain';
+import type { Story, Tag } from '@/types/domain';
 
 const IMAGE_SLIDE_DURATION_MS = 5000;
 
@@ -25,11 +26,15 @@ export default function StoryViewerScreen() {
   const insets = useSafeAreaInsets();
 
   const [story, setStory] = useState<Story | null | undefined>(undefined);
+  const [tags, setTags] = useState<Tag[]>([]);
   useEffect(() => {
     if (!id) return;
     getStory(id)
       .then(setStory)
       .catch(() => setStory(null));
+    listStoryTags(id)
+      .then(setTags)
+      .catch(() => setTags([]));
   }, [id]);
 
   const { slides, mediaById, loading } = useSlides(id);
@@ -137,6 +142,8 @@ export default function StoryViewerScreen() {
   }
 
   const notImplemented = () => Alert.alert(t('viewer.comingSoon'));
+  const openComments = () => router.push(`/story/${story.id}/comments`);
+  const openTagSearch = (tagName: string) => router.push(`/search?q=${encodeURIComponent(tagName)}`);
 
   return (
     <View style={styles.root}>
@@ -190,7 +197,7 @@ export default function StoryViewerScreen() {
 
       <View style={[styles.bottomBar, { paddingBottom: insets.bottom + Spacing.three }]}>
         <ActionButton icon={{ ios: 'info.circle', android: 'info', web: 'info' }} onPress={() => setShowInfo((v) => !v)} />
-        <ActionButton icon={{ ios: 'bubble.right', android: 'chat_bubble', web: 'chat_bubble' }} onPress={notImplemented} />
+        <ActionButton icon={{ ios: 'bubble.right', android: 'chat_bubble', web: 'chat_bubble' }} onPress={openComments} />
         <ActionButton
           icon={{ ios: 'square.and.arrow.up', android: 'share', web: 'share' }}
           onPress={notImplemented}
@@ -203,6 +210,15 @@ export default function StoryViewerScreen() {
             <Text style={styles.overlayTextSmallBold}>{story.title}</Text>
             {story.description ? (
               <Text style={[styles.overlayTextSmall, styles.infoDescription]}>{story.description}</Text>
+            ) : null}
+            {tags.length > 0 ? (
+              <View style={styles.infoTagsRow}>
+                {tags.map((tag) => (
+                  <Pressable key={tag.id} onPress={() => openTagSearch(tag.name)}>
+                    <Text style={styles.overlayTextCaption}>#{tag.name}</Text>
+                  </Pressable>
+                ))}
+              </View>
             ) : null}
             <Text style={styles.overlayTextCaptionMuted}>
               {index + 1} / {slides.length}
@@ -401,5 +417,10 @@ const styles = StyleSheet.create({
   },
   infoDescription: {
     opacity: 0.9,
+  },
+  infoTagsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.two,
   },
 });

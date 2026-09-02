@@ -284,6 +284,10 @@ export type Database = {
         Args: { blocks: Json };
         Returns: string;
       };
+      search_stories: {
+        Args: { search_query: string };
+        Returns: Database['public']['Tables']['stories']['Row'][];
+      };
     };
     Enums: {
       story_visibility: StoryVisibility;
