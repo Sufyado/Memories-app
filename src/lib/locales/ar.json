@@ -1,0 +1,106 @@
+{
+  "common": {
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "done": "تم",
+    "add": "إضافة",
+    "search": "بحث",
+    "loading": "جارٍ التحميل…",
+    "retry": "إعادة المحاولة",
+    "share": "مشاركة",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "back": "رجوع",
+    "seeAll": "عرض الكل",
+    "error": "حدث خطأ ما",
+    "untitled": "بدون عنوان"
+  },
+  "auth": {
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "fullName": "الاسم الكامل",
+    "noAccount": "ليس لديك حساب؟",
+    "hasAccount": "لديك حساب بالفعل؟",
+    "signOut": "تسجيل الخروج",
+    "welcome": "مرحبًا بك في Vistoria",
+    "tagline": "أرشيفك البصري للذكريات والمعرفة"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "library": "المكتبة",
+    "search": "بحث",
+    "create": "إنشاء",
+    "profile": "الحساب"
+  },
+  "folder": {
+    "new": "مجلد جديد",
+    "name": "اسم المجلد",
+    "stories": "{{count}} قصة",
+    "stories_other": "{{count}} قصص",
+    "empty": "هذا المجلد فارغ",
+    "emptyDesc": "أنشئ أول قصة لبدء الأرشفة."
+  },
+  "story": {
+    "new": "قصة جديدة",
+    "title": "العنوان",
+    "description": "الوصف",
+    "chooseFolder": "اختر المجلد",
+    "addSlides": "إضافة شرائح",
+    "slide": "شريحة",
+    "slides_one": "{{count}} شريحة",
+    "slides_other": "{{count}} شرائح",
+    "camera": "الكاميرا",
+    "gallery": "المعرض",
+    "video": "فيديو",
+    "text": "نص",
+    "viewerInfo": "معلومات",
+    "comment": "تعليق",
+    "editStory": "تعديل القصة",
+    "reorderHint": "اضغط مطولًا واسحب لإعادة الترتيب",
+    "addSlide": "إضافة شريحة",
+    "duplicate": "نسخ",
+    "deleteConfirmTitle": "حذف هذه القصة؟",
+    "deleteConfirmBody": "سيتم حذف القصة وكل شرائحها نهائيًا.",
+    "deleteSlideConfirmTitle": "حذف هذه الشريحة؟",
+    "version": "الإصدار {{version}}",
+    "updatedAt": "آخر تحديث {{date}}"
+  },
+  "library": {
+    "title": "المكتبة",
+    "grid": "شبكة",
+    "list": "قائمة",
+    "empty": "أرشيفك فارغ",
+    "emptyDesc": "التقط ذكرى، أو درسًا، أو مشروعًا — وابنِ أرشيفك."
+  },
+  "search": {
+    "placeholder": "ابحث في القصص، الوسوم، الملاحظات…",
+    "noResults": "لا نتائج لـ \"{{query}}\"",
+    "recentTags": "الوسوم"
+  },
+  "share": {
+    "visibility": "الخصوصية",
+    "private": "خاص",
+    "team": "الفريق",
+    "public": "أي شخص يملك الرابط",
+    "createLink": "إنشاء رابط مشاركة",
+    "disableLink": "إيقاف الرابط",
+    "enableLink": "تفعيل الرابط",
+    "copyLink": "نسخ الرابط",
+    "linkCopied": "تم نسخ الرابط"
+  },
+  "roles": {
+    "owner": "مالك",
+    "editor": "محرر",
+    "viewer": "مشاهد"
+  },
+  "export": {
+    "title": "تصدير",
+    "json": "JSON",
+    "zip": "ZIP (وسائط ونصوص)",
+    "pdf": "PDF"
+  }
+}

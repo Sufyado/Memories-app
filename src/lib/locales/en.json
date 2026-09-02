@@ -1,0 +1,106 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "done": "Done",
+    "add": "Add",
+    "search": "Search",
+    "loading": "Loading…",
+    "retry": "Retry",
+    "share": "Share",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back",
+    "seeAll": "See all",
+    "error": "Something went wrong",
+    "untitled": "Untitled"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Create Account",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full name",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "signOut": "Sign Out",
+    "welcome": "Welcome to Vistoria",
+    "tagline": "Your visual memory & knowledge archive"
+  },
+  "nav": {
+    "home": "Home",
+    "library": "Library",
+    "search": "Search",
+    "create": "Create",
+    "profile": "Profile"
+  },
+  "folder": {
+    "new": "New Folder",
+    "name": "Folder name",
+    "stories": "{{count}} story",
+    "stories_other": "{{count}} stories",
+    "empty": "This folder is empty",
+    "emptyDesc": "Create your first story to start archiving."
+  },
+  "story": {
+    "new": "New Story",
+    "title": "Title",
+    "description": "Description",
+    "chooseFolder": "Choose folder",
+    "addSlides": "Add slides",
+    "slide": "Slide",
+    "slides_one": "{{count}} slide",
+    "slides_other": "{{count}} slides",
+    "camera": "Camera",
+    "gallery": "Gallery",
+    "video": "Video",
+    "text": "Text",
+    "viewerInfo": "Info",
+    "comment": "Comment",
+    "editStory": "Edit Story",
+    "reorderHint": "Hold and drag to reorder",
+    "addSlide": "Add Slide",
+    "duplicate": "Duplicate",
+    "deleteConfirmTitle": "Delete this story?",
+    "deleteConfirmBody": "This will permanently delete the story and all its slides.",
+    "deleteSlideConfirmTitle": "Delete this slide?",
+    "version": "v{{version}}",
+    "updatedAt": "Updated {{date}}"
+  },
+  "library": {
+    "title": "Library",
+    "grid": "Grid",
+    "list": "List",
+    "empty": "Your archive is empty",
+    "emptyDesc": "Capture a memory, a lesson, or a project — build your archive."
+  },
+  "search": {
+    "placeholder": "Search stories, tags, notes…",
+    "noResults": "No results for \"{{query}}\"",
+    "recentTags": "Tags"
+  },
+  "share": {
+    "visibility": "Visibility",
+    "private": "Private",
+    "team": "Team",
+    "public": "Anyone with the link",
+    "createLink": "Create share link",
+    "disableLink": "Disable link",
+    "enableLink": "Enable link",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied"
+  },
+  "roles": {
+    "owner": "Owner",
+    "editor": "Editor",
+    "viewer": "Viewer"
+  },
+  "export": {
+    "title": "Export",
+    "json": "JSON",
+    "zip": "ZIP (media + text)",
+    "pdf": "PDF"
+  }
+}

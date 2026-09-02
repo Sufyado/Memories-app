@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "Vistoria",
+    "slug": "vistoria",
+    "scheme": "vistoria",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vistoria.app"
+    },
+    "android": {
+      "package": "com.vistoria.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#111318",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Vistoria يحتاج الوصول إلى الصور لإضافتها إلى ذكرياتك.",
+          "cameraPermission": "Vistoria يحتاج الوصول إلى الكاميرا لالتقاط لحظاتك مباشرة."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {}
+    }
+  }
+}
