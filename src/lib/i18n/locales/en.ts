@@ -69,6 +69,15 @@ export const en = {
     slideCaptionPlaceholder: 'Add a caption…',
     deleteSlideConfirmTitle: 'Delete this slide?',
   },
+  viewer: {
+    edit: 'Edit',
+    comment: 'Comment',
+    share: 'Share',
+    info: 'Info',
+    comingSoon: 'Coming soon',
+    noSlidesTitle: 'This story has no slides yet',
+    noSlidesEdit: 'Add slides',
+  },
   profile: {
     title: 'Profile',
     account: 'Account',

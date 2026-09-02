@@ -1,18 +1,21 @@
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from 'react-native';
 
 import { AddSlideButtons } from '@/components/story/add-slide-buttons';
 import { SlideRow } from '@/components/story/slide-row';
 import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
 import { Button } from '@/components/ui/button';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Input } from '@/components/ui/input';
 import { Screen } from '@/components/ui/screen';
 import { Spacing } from '@/constants/theme';
+import { useTheme } from '@/hooks/use-theme';
 import { useAuth } from '@/lib/auth/auth-provider';
 import { deleteMedia } from '@/lib/data/media';
-import { deleteSlide, updateSlideBlocks } from '@/lib/data/slides';
+import { deleteSlide, duplicateSlide, updateSlideBlocks } from '@/lib/data/slides';
 import { deleteStory, getStory, updateStory } from '@/lib/data/stories';
 import { useSlides } from '@/lib/data/use-slides';
 import { useI18n } from '@/lib/i18n';
@@ -22,6 +25,7 @@ export default function StoryDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t } = useI18n();
   const { user } = useAuth();
+  const theme = useTheme();
 
   const [story, setStory] = useState<Story | null | undefined>(undefined);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -129,6 +133,17 @@ export default function StoryDetailScreen() {
     }
   };
 
+  const handleDuplicateSlide = async (slideId: string) => {
+    const slide = slides.find((s) => s.id === slideId);
+    if (!slide) return;
+    try {
+      await duplicateSlide(slide, slides.length);
+      refreshSlides();
+    } catch (e) {
+      Alert.alert(t('common.error'), e instanceof Error ? e.message : undefined);
+    }
+  };
+
   const handleDeleteSlide = (slideId: string) => {
     Alert.alert(t('storyDetail.deleteSlideConfirmTitle'), t('storyDetail.deleteConfirmBody'), [
       { text: t('common.cancel'), style: 'cancel' },
@@ -150,7 +165,18 @@ export default function StoryDetailScreen() {
   };
 
   return (
-    <Screen title={story.title} showBackButton>
+    <Screen
+      title={story.title}
+      showBackButton
+      headerRight={
+        slides.length > 0 ? (
+          <Pressable accessibilityRole="button" onPress={() => router.push(`/story/${story.id}/view`)}>
+            <ThemedView type="backgroundElement" style={styles.previewButton}>
+              <SymbolView name={{ ios: 'play.fill', android: 'play_arrow', web: 'play_arrow' }} size={16} tintColor={theme.primary} />
+            </ThemedView>
+          </Pressable>
+        ) : undefined
+      }>
       <Input value={title} onChangeText={setTitle} editable={isOwner} placeholder={t('newStory.titlePlaceholder')} />
       <Input
         value={description}
@@ -187,6 +213,7 @@ export default function StoryDetailScreen() {
                 canMoveDown={index < slides.length - 1}
                 onMoveUp={() => move(index, -1)}
                 onMoveDown={() => move(index, 1)}
+                onDuplicate={() => handleDuplicateSlide(slide.id)}
                 onDelete={() => handleDeleteSlide(slide.id)}
                 onCaptionChange={(text) => handleCaptionChange(slide.id, text)}
               />
@@ -215,6 +242,13 @@ export default function StoryDetailScreen() {
 const styles = StyleSheet.create({
   spinner: {
     marginTop: Spacing.six,
+  },
+  previewButton: {
+    width: 40,
+    height: 40,
+    borderRadius: Spacing.five,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   errorWrap: {
     alignItems: 'center',

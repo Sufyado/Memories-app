@@ -49,11 +49,14 @@ src/
   app/
     (tabs)/                Home, Library, Search, Create, Profile
     auth/                  Sign in / sign up (modal routes)
-    create/                New Folder / New Story (modal routes)
-    library/[folderId].tsx Drill into a folder
-    story/[id].tsx          Story detail (title/description, delete)
+    create/                 New Folder / New Story (modal routes)
+    library/[folderId].tsx  Drill into a folder
+    story/[id]/
+      index.tsx              Editor (title/description, slides, delete)
+      view.tsx                Viewer (full-screen slide playback)
   components/
-    library/                Folder/story cards, grid-list toggle
+    library/                 Folder/story cards, grid-list toggle
+    story/                   Slide row, add-slide buttons, progress bar
     ui/                      Screen, Button, Input, EmptyState, SignInPrompt, …
   constants/                Design tokens: colors, spacing, typography
   hooks/                    useTheme, useColorScheme
@@ -61,7 +64,8 @@ src/
     i18n/                   Arabic/English translations + RTL-aware provider
     supabase/                Client + hand-written Database types
     auth/auth-provider.tsx   Session state + sign in/up/out
-    data/                    Supabase queries for folders/stories
+    data/                    Supabase queries (folders/stories/slides/media)
+    media/                   Camera/gallery picking, video thumbnails
   types/
     domain.ts               Shared domain types (Folder, Story, Slide, Media, …)
 assets/                     Icons, splash, tab bar assets
@@ -212,18 +216,43 @@ Development proceeds in phases (see the project plan).
   upload or delete, and access follows the same share-link rules as the
   story itself.
 
-Not yet implemented: the swipeable Story Viewer (Phase 5 — slides can be
-added and edited now, but there's no Instagram-style full-screen playback
-yet), search, tags, comments, team sharing, and export.
+**Phase 5 — Story Viewer** ✅
 
-> **Testing note:** media upload and the Story Viewer both need a real,
-> configured Supabase project (camera/gallery access and Storage uploads
-> can't be exercised in a sandboxed CI-style environment). The schema, RLS,
-> and storage policies were verified against a real local Postgres
-> instance (`supabase/tests/run.sh`); the upload/slide-editing UI itself
-> has been type-checked, linted, and smoke-tested for crashes, but not yet
-> exercised end-to-end against a live project — please try the full
-> capture → add slide → reorder → delete flow once you've set up Supabase.
+- `/story/[id]/view`: the core experience — full-screen, edge-to-edge,
+  Instagram/Snapchat-style playback of a story's slides. Segmented
+  progress bar at the top (one segment per slide, filling as it plays);
+  tap the left/right thirds of the screen to go to the previous/next
+  slide, tap the center to pause/resume; images auto-advance after 5s,
+  videos auto-advance when they finish (`playToEnd`) and drive the
+  progress bar from actual playback position (`expo-video`).
+  Always-dark chrome regardless of the device's light/dark theme setting
+  (fixed white-on-black, since it's an immersive overlay, not a themed
+  screen). An info panel shows the story's description; Edit (owner only)
+  jumps to the editor; Comment/Share are wired up as visible
+  "coming soon" affordances — real ones land in Phase 6/7.
+- Tapping a story from Home/Library now opens the Viewer (not the
+  editor) — matching the spec's "open the memory and scroll through it"
+  principle. The route moved to `/story/[id]/index.tsx` so `/story/[id]`
+  (editor) and `/story/[id]/view` (viewer) can coexist; the editor is
+  reached via the Viewer's Edit button, or automatically right after
+  creating a new story.
+- Editor: added slide **duplicate** (appends a copy of the same
+  media/caption) alongside the existing add/edit-caption/reorder/delete,
+  plus a preview button that opens the Viewer.
+
+Not yet implemented: search, tags, comments, team sharing, and export.
+
+> **Testing note:** media upload, video playback, and camera/gallery
+> access all need a real, configured Supabase project and a real
+> device/browser — none of that is available in this sandboxed
+> environment. What *was* verified here: schema, RLS, and storage
+> policies against a real local Postgres instance
+> (`supabase/tests/run.sh`); every screen (including the Viewer's
+> not-found/error state) is type-checked, linted, and smoke-tested for
+> crashes in a headless browser. The actual capture → add slide →
+> reorder/duplicate/delete → watch it play flow has not been exercised
+> end-to-end — please try it once you've set up Supabase and are running
+> on a device or in a browser with camera/file access.
 
 ## Database schema
 

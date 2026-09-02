@@ -61,6 +61,17 @@ export async function updateSlideBlocks(id: string, blocks: SlideBlock[]): Promi
   return mapSlide(data);
 }
 
+/** Appends a copy of `slide` to the end of its story (same media + text). */
+export async function duplicateSlide(slide: StorySlide, nextOrderIndex: number): Promise<StorySlide> {
+  return createSlide({
+    storyId: slide.storyId,
+    orderIndex: nextOrderIndex,
+    blocks: slide.blocks,
+    mediaId: slide.mediaId,
+    mediaType: slide.mediaType,
+  });
+}
+
 export async function deleteSlide(id: string): Promise<void> {
   const { error } = await supabase.from('story_slides').delete().eq('id', id);
   if (error) throw error;

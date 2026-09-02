@@ -29,7 +29,7 @@ export default function LibraryScreen() {
   }
 
   const handleFolderPress = (folder: FolderWithCount) => router.push(`/library/${folder.id}`);
-  const handleStoryPress = (story: Story) => router.push(`/story/${story.id}`);
+  const handleStoryPress = (story: Story) => router.push(`/story/${story.id}/view`);
 
   return (
     <Screen title={t('library.title')} headerRight={<LayoutToggle layout={layout} onChange={setLayout} />}>

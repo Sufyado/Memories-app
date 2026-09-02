@@ -15,6 +15,7 @@ export function SlideRow({
   media,
   onMoveUp,
   onMoveDown,
+  onDuplicate,
   onDelete,
   onCaptionChange,
   canMoveUp,
@@ -24,6 +25,7 @@ export function SlideRow({
   media: Media | undefined;
   onMoveUp: () => void;
   onMoveDown: () => void;
+  onDuplicate: () => void;
   onDelete: () => void;
   onCaptionChange: (text: string) => void;
   canMoveUp: boolean;
@@ -78,6 +80,10 @@ export function SlideRow({
           icon={{ ios: 'chevron.down', android: 'arrow_downward', web: 'arrow_downward' }}
           disabled={!canMoveDown}
           onPress={onMoveDown}
+        />
+        <IconButton
+          icon={{ ios: 'plus.square.on.square', android: 'content_copy', web: 'content_copy' }}
+          onPress={onDuplicate}
         />
         <IconButton
           icon={{ ios: 'trash', android: 'delete', web: 'delete' }}

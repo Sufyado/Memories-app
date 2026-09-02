@@ -71,6 +71,15 @@ export const ar: TranslationSchema = {
     slideCaptionPlaceholder: 'أضف تعليقًا…',
     deleteSlideConfirmTitle: 'هل تريد حذف هذه الشريحة؟',
   },
+  viewer: {
+    edit: 'تعديل',
+    comment: 'تعليق',
+    share: 'مشاركة',
+    info: 'معلومات',
+    comingSoon: 'قريبًا',
+    noSlidesTitle: 'لا تحتوي هذه القصة على شرائح بعد',
+    noSlidesEdit: 'أضف شرائح',
+  },
   profile: {
     title: 'الملف الشخصي',
     account: 'الحساب',

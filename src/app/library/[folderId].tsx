@@ -28,7 +28,7 @@ export default function FolderScreen() {
   }, [folderId]);
 
   const handleFolderPress = (child: FolderWithCount) => router.push(`/library/${child.id}`);
-  const handleStoryPress = (story: Story) => router.push(`/story/${story.id}`);
+  const handleStoryPress = (story: Story) => router.push(`/story/${story.id}/view`);
 
   return (
     <Screen

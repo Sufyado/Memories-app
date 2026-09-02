@@ -43,7 +43,7 @@ export default function HomeScreen() {
   }
 
   const handleFolderPress = (folder: FolderWithCount) => router.push(`/library/${folder.id}`);
-  const handleStoryPress = (story: Story) => router.push(`/story/${story.id}`);
+  const handleStoryPress = (story: Story) => router.push(`/story/${story.id}/view`);
 
   const isEmpty = collections.length === 0 && recentStories.length === 0;
 
